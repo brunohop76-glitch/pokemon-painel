@@ -69,7 +69,8 @@
             font-size: 15px;
         }
 
-        nav button:hover {
+        nav button:hover,
+        nav button.ativo {
             background: #374151;
         }
 
@@ -139,6 +140,104 @@
             background: #dc2626;
         }
 
+        .tela {
+            display: none;
+        }
+
+        .tela.ativa {
+            display: block;
+        }
+
+        .formulario {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .formulario h2 {
+            margin-bottom: 8px;
+        }
+
+        .formulario .descricao {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .campo.completo {
+            grid-column: 1 / -1;
+        }
+
+        .campo label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .campo input,
+        .campo select,
+        .campo textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .campo input:focus,
+        .campo select:focus,
+        .campo textarea:focus {
+            border-color: #ef4444;
+        }
+
+        .campo textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .acoes-formulario {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .botao-secundario {
+            background: #e5e7eb;
+            color: #222;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .botao-secundario:hover {
+            background: #d1d5db;
+        }
+
+        .lista-cartas {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .mensagem-vazia {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6b7280;
+        }
+
         @media (max-width: 900px) {
             .cards {
                 grid-template-columns: repeat(2, 1fr);
@@ -162,6 +261,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
             main {
                 padding: 20px;
             }
@@ -182,59 +285,401 @@
         <h2>Menu</h2>
 
         <nav>
-            <button>🏠 Dashboard</button>
-            <button>🃏 Minhas Cartas</button>
-            <button>➕ Cadastrar Carta</button>
-            <button>📦 Estoque</button>
-            <button>💰 Vendas</button>
-            <button>📊 Relatórios</button>
+            <button class="ativo" onclick="mostrarTela('dashboard', this)">
+                🏠 Dashboard
+            </button>
+
+            <button onclick="mostrarTela('cartas', this)">
+                🃏 Minhas Cartas
+            </button>
+
+            <button onclick="mostrarTela('cadastro', this)">
+                ➕ Cadastrar Carta
+            </button>
+
+            <button onclick="mostrarTela('estoque', this)">
+                📦 Estoque
+            </button>
+
+            <button onclick="mostrarTela('vendas', this)">
+                💰 Vendas
+            </button>
+
+            <button onclick="mostrarTela('relatorios', this)">
+                📊 Relatórios
+            </button>
         </nav>
     </aside>
 
     <main>
 
-        <div class="titulo">
-            <h2>Dashboard</h2>
-            <p>Bem-vindo ao seu painel de gerenciamento.</p>
-        </div>
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="tela ativa">
 
-        <div class="cards">
-
-            <div class="card">
-                <h3>Total de Cartas</h3>
-                <strong>0</strong>
+            <div class="titulo">
+                <h2>Dashboard</h2>
+                <p>Bem-vindo ao seu painel de gerenciamento.</p>
             </div>
 
-            <div class="card">
-                <h3>Cartas em Estoque</h3>
-                <strong>0</strong>
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Total de Cartas</h3>
+                    <strong id="totalCartas">0</strong>
+                </div>
+
+                <div class="card">
+                    <h3>Cartas em Estoque</h3>
+                    <strong id="totalEstoque">0</strong>
+                </div>
+
+                <div class="card">
+                    <h3>Cartas Vendidas</h3>
+                    <strong>0</strong>
+                </div>
+
+                <div class="card">
+                    <h3>Valor do Acervo</h3>
+                    <strong id="valorAcervo">R$ 0,00</strong>
+                </div>
+
             </div>
 
-            <div class="card">
-                <h3>Cartas Vendidas</h3>
-                <strong>0</strong>
+            <div class="acoes">
+
+                <h2>Ações rápidas</h2>
+
+                <button class="botao" onclick="mostrarTela('cadastro')">
+                    + Cadastrar nova carta
+                </button>
+
             </div>
 
-            <div class="card">
-                <h3>Valor do Acervo</h3>
-                <strong>R$ 0,00</strong>
+        </section>
+
+
+        <!-- MINHAS CARTAS -->
+        <section id="cartas" class="tela">
+
+            <div class="titulo">
+                <h2>Minhas Cartas</h2>
+                <p>Veja todas as cartas cadastradas.</p>
             </div>
 
-        </div>
+            <div class="lista-cartas" id="listaCartas">
 
-        <div class="acoes">
+                <div class="mensagem-vazia">
+                    <h3>Nenhuma carta cadastrada</h3>
+                    <p>Comece cadastrando sua primeira carta Pokémon.</p>
+                    <br>
 
-            <h2>Ações rápidas</h2>
+                    <button class="botao" onclick="mostrarTela('cadastro')">
+                        + Cadastrar Carta
+                    </button>
+                </div>
 
-            <button class="botao">
-                + Cadastrar nova carta
-            </button>
+            </div>
 
-        </div>
+        </section>
+
+
+        <!-- CADASTRO -->
+        <section id="cadastro" class="tela">
+
+            <div class="titulo">
+                <h2>Cadastrar Carta</h2>
+                <p>Adicione uma nova carta ao seu acervo.</p>
+            </div>
+
+            <div class="formulario">
+
+                <h2>Informações da carta</h2>
+
+                <p class="descricao">
+                    Preencha os dados abaixo.
+                </p>
+
+                <form id="formCarta">
+
+                    <div class="form-grid">
+
+                        <div class="campo">
+                            <label>Nome da carta *</label>
+                            <input
+                                type="text"
+                                id="nome"
+                                placeholder="Ex: Charizard"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label>Número da carta</label>
+                            <input
+                                type="text"
+                                id="numero"
+                                placeholder="Ex: 006/165"
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label>Coleção *</label>
+                            <input
+                                type="text"
+                                id="colecao"
+                                placeholder="Ex: Destinos de Paldea"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label>Raridade</label>
+
+                            <select id="raridade">
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option>Comum</option>
+                                <option>Incomum</option>
+                                <option>Rara</option>
+                                <option>Holográfica</option>
+                                <option>Ultra Rara</option>
+                                <option>Ilustração Rara</option>
+                                <option>Ilustração Especial Rara</option>
+                                <option>Rara Hiper</option>
+
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label>Idioma</label>
+
+                            <select id="idioma">
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option>Português</option>
+                                <option>Inglês</option>
+                                <option>Japonês</option>
+                                <option>Coreano</option>
+                                <option>Chinês</option>
+
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label>Condição</label>
+
+                            <select id="condicao">
+
+                                <option>Near Mint (NM)</option>
+                                <option>Lightly Played (LP)</option>
+                                <option>Moderately Played (MP)</option>
+                                <option>Heavily Played (HP)</option>
+                                <option>Damaged</option>
+
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label>Quantidade *</label>
+
+                            <input
+                                type="number"
+                                id="quantidade"
+                                value="1"
+                                min="1"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label>Preço de custo</label>
+
+                            <input
+                                type="number"
+                                id="custo"
+                                placeholder="0,00"
+                                step="0.01"
+                                min="0"
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label>Preço de venda</label>
+
+                            <input
+                                type="number"
+                                id="preco"
+                                placeholder="0,00"
+                                step="0.01"
+                                min="0"
+                            >
+                        </div>
+
+                        <div class="campo completo">
+                            <label>Foto da carta</label>
+
+                            <input
+                                type="file"
+                                id="foto"
+                                accept="image/*"
+                            >
+                        </div>
+
+                        <div class="campo completo">
+                            <label>Observações</label>
+
+                            <textarea
+                                id="observacoes"
+                                placeholder="Digite alguma observação sobre a carta..."
+                            ></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="acoes-formulario">
+
+                        <button
+                            type="submit"
+                            class="botao"
+                        >
+                            💾 Salvar Carta
+                        </button>
+
+                        <button
+                            type="button"
+                            class="botao-secundario"
+                            onclick="mostrarTela('dashboard')"
+                        >
+                            Cancelar
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ESTOQUE -->
+        <section id="estoque" class="tela">
+
+            <div class="titulo">
+                <h2>Estoque</h2>
+                <p>Controle das cartas disponíveis.</p>
+            </div>
+
+            <div class="lista-cartas">
+
+                <div class="mensagem-vazia">
+                    <h3>Estoque vazio</h3>
+                    <p>As cartas cadastradas aparecerão aqui.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VENDAS -->
+        <section id="vendas" class="tela">
+
+            <div class="titulo">
+                <h2>Vendas</h2>
+                <p>Controle suas vendas de cartas.</p>
+            </div>
+
+            <div class="lista-cartas">
+
+                <div class="mensagem-vazia">
+                    <h3>Nenhuma venda registrada</h3>
+                    <p>As vendas aparecerão aqui futuramente.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RELATÓRIOS -->
+        <section id="relatorios" class="tela">
+
+            <div class="titulo">
+                <h2>Relatórios</h2>
+                <p>Resumo financeiro e do seu acervo.</p>
+            </div>
+
+            <div class="lista-cartas">
+
+                <div class="mensagem-vazia">
+                    <h3>Relatórios</h3>
+                    <p>Em breve teremos gráficos e informações do seu acervo.</p>
+                </div>
+
+            </div>
+
+        </section>
 
     </main>
 
 </div>
+
+
+<script>
+
+    function mostrarTela(id, botao) {
+
+        const telas = document.querySelectorAll('.tela');
+
+        telas.forEach(function(tela) {
+            tela.classList.remove('ativa');
+        });
+
+        document.getElementById(id).classList.add('ativa');
+
+        const botoes = document.querySelectorAll('nav button');
+
+        botoes.forEach(function(item) {
+            item.classList.remove('ativo');
+        });
+
+        if (botao) {
+            botao.classList.add('ativo');
+        }
+    }
+
+
+    document.getElementById('formCarta').addEventListener('submit', function(event) {
+
+        event.preventDefault();
+
+        const nome = document.getElementById('nome').value;
+        const quantidade = Number(document.getElementById('quantidade').value);
+        const preco = Number(document.getElementById('preco').value) || 0;
+
+        alert(
+            'Carta cadastrada com sucesso!\\n\\n' +
+            'Carta: ' + nome + '\\n' +
+            'Quantidade: ' + quantidade + '\\n' +
+            'Preço: R$ ' + preco.toFixed(2)
+        );
+
+        document.getElementById('formCarta').reset();
+
+        document.getElementById('quantidade').value = 1;
+
+        mostrarTela('dashboard');
+
+    });
+
+</script>
 
 </body>
 </html>
