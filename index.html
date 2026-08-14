@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>O DIÁRIO TCG - Painel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f5f7;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        header span {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 72px);
+        }
+
+        aside {
+            width: 230px;
+            background: #1f2937;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        aside h2 {
+            font-size: 14px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        nav button {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            padding: 13px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        nav button:hover {
+            background: #374151;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .titulo {
+            margin-bottom: 25px;
+        }
+
+        .titulo h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .titulo p {
+            color: #6b7280;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .card strong {
+            font-size: 28px;
+        }
+
+        .acoes {
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .acoes h2 {
+            margin-bottom: 20px;
+        }
+
+        .botao {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .botao:hover {
+            background: #dc2626;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            aside {
+                width: 190px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🃏 O DIÁRIO TCG</h1>
+    <span>Painel de Cartas Pokémon</span>
+</header>
+
+<div class="container">
+
+    <aside>
+        <h2>Menu</h2>
+
+        <nav>
+            <button>🏠 Dashboard</button>
+            <button>🃏 Minhas Cartas</button>
+            <button>➕ Cadastrar Carta</button>
+            <button>📦 Estoque</button>
+            <button>💰 Vendas</button>
+            <button>📊 Relatórios</button>
+        </nav>
+    </aside>
+
+    <main>
+
+        <div class="titulo">
+            <h2>Dashboard</h2>
+            <p>Bem-vindo ao seu painel de gerenciamento.</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total de Cartas</h3>
+                <strong>0</strong>
+            </div>
+
+            <div class="card">
+                <h3>Cartas em Estoque</h3>
+                <strong>0</strong>
+            </div>
+
+            <div class="card">
+                <h3>Cartas Vendidas</h3>
+                <strong>0</strong>
+            </div>
+
+            <div class="card">
+                <h3>Valor do Acervo</h3>
+                <strong>R$ 0,00</strong>
+            </div>
+
+        </div>
+
+        <div class="acoes">
+
+            <h2>Ações rápidas</h2>
+
+            <button class="botao">
+                + Cadastrar nova carta
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
