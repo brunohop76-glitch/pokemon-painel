@@ -3,683 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>O DIÁRIO TCG - Painel</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f4f5f7;
-            color: #222;
-        }
-
-        header {
-            background: #111827;
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 24px;
-        }
-
-        header span {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .container {
-            display: flex;
-            min-height: calc(100vh - 72px);
-        }
-
-        aside {
-            width: 230px;
-            background: #1f2937;
-            color: white;
-            padding: 25px 15px;
-        }
-
-        aside h2 {
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.6;
-            text-transform: uppercase;
-        }
-
-        nav button {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: white;
-            text-align: left;
-            padding: 13px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        nav button:hover,
-        nav button.ativo {
-            background: #374151;
-        }
-
-        main {
-            flex: 1;
-            padding: 30px;
-        }
-
-        .titulo {
-            margin-bottom: 25px;
-        }
-
-        .titulo h2 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .titulo p {
-            color: #6b7280;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .card h3 {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 10px;
-        }
-
-        .card strong {
-            font-size: 28px;
-        }
-
-        .acoes {
-            margin-top: 30px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-        }
-
-        .acoes h2 {
-            margin-bottom: 20px;
-        }
-
-        .botao {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 13px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .botao:hover {
-            background: #dc2626;
-        }
-
-        .tela {
-            display: none;
-        }
-
-        .tela.ativa {
-            display: block;
-        }
-
-        .formulario {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .formulario h2 {
-            margin-bottom: 8px;
-        }
-
-        .formulario .descricao {
-            color: #6b7280;
-            margin-bottom: 25px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .campo {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .campo.completo {
-            grid-column: 1 / -1;
-        }
-
-        .campo label {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 7px;
-        }
-
-        .campo input,
-        .campo select,
-        .campo textarea {
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .campo input:focus,
-        .campo select:focus,
-        .campo textarea:focus {
-            border-color: #ef4444;
-        }
-
-        .campo textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .acoes-formulario {
-            margin-top: 25px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .botao-secundario {
-            background: #e5e7eb;
-            color: #222;
-            border: none;
-            padding: 13px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .botao-secundario:hover {
-            background: #d1d5db;
-        }
-
-        .lista-cartas {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-        }
-
-        .mensagem-vazia {
-            text-align: center;
-            padding: 50px 20px;
-            color: #6b7280;
-        }
-
-        @media (max-width: 900px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            aside {
-                width: 190px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                flex-direction: column;
-            }
-
-            aside {
-                width: 100%;
-            }
-
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            main {
-                padding: 20px;
-            }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: #f4f5f7; color: #222; }
+        header { background: #111827; color: white; padding: 20px 30px; display:flex; justify-content:space-between; align-items:center; }
+        header h1 { font-size:24px; }
+        header span { font-size:14px; opacity:.8; }
+        .container { display:flex; min-height:calc(100vh - 72px); }
+        aside { width:230px; background:#1f2937; color:white; padding:25px 15px; }
+        aside h2 { font-size:14px; margin-bottom:20px; opacity:.6; text-transform:uppercase; }
+        nav button { width:100%; background:transparent; border:0; color:white; text-align:left; padding:13px 15px; margin-bottom:5px; border-radius:8px; cursor:pointer; font-size:15px; }
+        nav button:hover, nav button.ativo { background:#374151; }
+        main { flex:1; padding:30px; }
+        .titulo { margin-bottom:25px; }
+        .titulo h2 { font-size:28px; margin-bottom:5px; }
+        .titulo p { color:#6b7280; }
+        .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+        .card { background:white; padding:25px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        .card h3 { font-size:14px; color:#6b7280; margin-bottom:10px; }
+        .card strong { font-size:28px; }
+        .acoes, .lista-cartas, .formulario { margin-top:30px; background:white; padding:25px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        .acoes h2 { margin-bottom:20px; }
+        .botao { background:#ef4444; color:white; border:0; padding:13px 20px; border-radius:8px; cursor:pointer; font-size:15px; }
+        .botao:hover { background:#dc2626; }
+        .botao:disabled { opacity:.6; cursor:not-allowed; }
+        .botao-secundario { background:#e5e7eb; color:#222; border:0; padding:13px 20px; border-radius:8px; cursor:pointer; font-size:15px; }
+        .tela { display:none; }
+        .tela.ativa { display:block; }
+        .formulario { margin-top:0; }
+        .formulario h2 { margin-bottom:8px; }
+        .formulario .descricao { color:#6b7280; margin-bottom:25px; }
+        .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+        .campo { display:flex; flex-direction:column; }
+        .campo.completo { grid-column:1 / -1; }
+        .campo label { font-weight:bold; font-size:14px; margin-bottom:7px; }
+        .campo input, .campo select, .campo textarea { border:1px solid #d1d5db; border-radius:8px; padding:12px; font-size:15px; outline:none; }
+        .campo input:focus, .campo select:focus, .campo textarea:focus { border-color:#ef4444; }
+        .campo textarea { min-height:100px; resize:vertical; }
+        .acoes-formulario { margin-top:25px; display:flex; gap:10px; }
+        .mensagem-vazia { text-align:center; padding:50px 20px; color:#6b7280; }
+        .barra-lista { display:flex; gap:10px; margin-bottom:20px; }
+        .barra-lista input { flex:1; border:1px solid #d1d5db; border-radius:8px; padding:12px; font-size:15px; }
+        .tabela-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; min-width:800px; }
+        th, td { padding:12px; border-bottom:1px solid #e5e7eb; text-align:left; font-size:14px; }
+        th { color:#6b7280; background:#f9fafb; }
+        .status { padding:5px 9px; border-radius:999px; background:#dcfce7; color:#166534; font-size:12px; }
+        .erro { background:#fee2e2; color:#991b1b; padding:12px; border-radius:8px; margin-bottom:15px; display:none; }
+        .sucesso { background:#dcfce7; color:#166534; padding:12px; border-radius:8px; margin-bottom:15px; display:none; }
+        @media (max-width:900px) { .cards { grid-template-columns:repeat(2,1fr); } aside { width:190px; } }
+        @media (max-width:600px) { .container { flex-direction:column; } aside { width:100%; } .cards { grid-template-columns:1fr; } .form-grid { grid-template-columns:1fr; } .campo.completo { grid-column:auto; } main { padding:20px; } header { padding:16px 20px; } }
     </style>
 </head>
-
 <body>
-
 <header>
     <h1>🃏 O DIÁRIO TCG</h1>
     <span>Painel de Cartas Pokémon</span>
 </header>
 
 <div class="container">
-
     <aside>
         <h2>Menu</h2>
-
         <nav>
-            <button class="ativo" onclick="mostrarTela('dashboard', this)">
-                🏠 Dashboard
-            </button>
-
-            <button onclick="mostrarTela('cartas', this)">
-                🃏 Minhas Cartas
-            </button>
-
-            <button onclick="mostrarTela('cadastro', this)">
-                ➕ Cadastrar Carta
-            </button>
-
-            <button onclick="mostrarTela('estoque', this)">
-                📦 Estoque
-            </button>
-
-            <button onclick="mostrarTela('vendas', this)">
-                💰 Vendas
-            </button>
-
-            <button onclick="mostrarTela('relatorios', this)">
-                📊 Relatórios
-            </button>
+            <button class="ativo" onclick="mostrarTela('dashboard', this)">🏠 Dashboard</button>
+            <button onclick="mostrarTela('cartas', this); carregarCartas()">🃏 Minhas Cartas</button>
+            <button onclick="mostrarTela('cadastro', this)">➕ Cadastrar Carta</button>
+            <button onclick="mostrarTela('estoque', this); carregarCartas()">📦 Estoque</button>
+            <button onclick="mostrarTela('vendas', this)">💰 Vendas</button>
+            <button onclick="mostrarTela('relatorios', this)">📊 Relatórios</button>
         </nav>
     </aside>
 
     <main>
-
-        <!-- DASHBOARD -->
         <section id="dashboard" class="tela ativa">
-
             <div class="titulo">
                 <h2>Dashboard</h2>
                 <p>Bem-vindo ao seu painel de gerenciamento.</p>
             </div>
-
             <div class="cards">
-
-                <div class="card">
-                    <h3>Total de Cartas</h3>
-                    <strong id="totalCartas">0</strong>
-                </div>
-
-                <div class="card">
-                    <h3>Cartas em Estoque</h3>
-                    <strong id="totalEstoque">0</strong>
-                </div>
-
-                <div class="card">
-                    <h3>Cartas Vendidas</h3>
-                    <strong>0</strong>
-                </div>
-
-                <div class="card">
-                    <h3>Valor do Acervo</h3>
-                    <strong id="valorAcervo">R$ 0,00</strong>
-                </div>
-
+                <div class="card"><h3>Total de Cartas</h3><strong id="totalCartas">0</strong></div>
+                <div class="card"><h3>Cartas em Estoque</h3><strong id="totalEstoque">0</strong></div>
+                <div class="card"><h3>Cartas Vendidas</h3><strong>0</strong></div>
+                <div class="card"><h3>Valor do Acervo</h3><strong id="valorAcervo">R$ 0,00</strong></div>
             </div>
-
             <div class="acoes">
-
                 <h2>Ações rápidas</h2>
-
-                <button class="botao" onclick="mostrarTela('cadastro')">
-                    + Cadastrar nova carta
-                </button>
-
+                <button class="botao" onclick="mostrarTela('cadastro')">+ Cadastrar nova carta</button>
             </div>
-
         </section>
 
-
-        <!-- MINHAS CARTAS -->
         <section id="cartas" class="tela">
-
-            <div class="titulo">
-                <h2>Minhas Cartas</h2>
-                <p>Veja todas as cartas cadastradas.</p>
-            </div>
-
-            <div class="lista-cartas" id="listaCartas">
-
-                <div class="mensagem-vazia">
-                    <h3>Nenhuma carta cadastrada</h3>
-                    <p>Comece cadastrando sua primeira carta Pokémon.</p>
-                    <br>
-
-                    <button class="botao" onclick="mostrarTela('cadastro')">
-                        + Cadastrar Carta
-                    </button>
+            <div class="titulo"><h2>Minhas Cartas</h2><p>Veja as cartas cadastradas no banco de dados.</p></div>
+            <div class="lista-cartas">
+                <div class="barra-lista">
+                    <input id="buscaCartas" type="search" placeholder="🔎 Buscar por nome ou coleção..." oninput="renderizarCartasFiltradas()">
+                    <button class="botao" onclick="carregarCartas()">Atualizar</button>
                 </div>
-
+                <div id="mensagemCartas" class="mensagem-vazia">Carregando...</div>
+                <div class="tabela-wrap" id="tabelaCartas" style="display:none"></div>
             </div>
-
         </section>
 
-
-        <!-- CADASTRO -->
         <section id="cadastro" class="tela">
-
-            <div class="titulo">
-                <h2>Cadastrar Carta</h2>
-                <p>Adicione uma nova carta ao seu acervo.</p>
-            </div>
-
+            <div class="titulo"><h2>Cadastrar Carta</h2><p>Adicione uma nova carta ao seu acervo.</p></div>
             <div class="formulario">
-
                 <h2>Informações da carta</h2>
-
-                <p class="descricao">
-                    Preencha os dados abaixo.
-                </p>
-
+                <p class="descricao">Preencha os dados abaixo.</p>
+                <div id="mensagemErro" class="erro"></div>
+                <div id="mensagemSucesso" class="sucesso"></div>
                 <form id="formCarta">
-
                     <div class="form-grid">
-
-                        <div class="campo">
-                            <label>Nome da carta *</label>
-                            <input
-                                type="text"
-                                id="nome"
-                                placeholder="Ex: Charizard"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label>Número da carta</label>
-                            <input
-                                type="text"
-                                id="numero"
-                                placeholder="Ex: 006/165"
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label>Coleção *</label>
-                            <input
-                                type="text"
-                                id="colecao"
-                                placeholder="Ex: Destinos de Paldea"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label>Raridade</label>
-
-                            <select id="raridade">
-
-                                <option value="">
-                                    Selecione
-                                </option>
-
-                                <option>Comum</option>
-                                <option>Incomum</option>
-                                <option>Rara</option>
-                                <option>Holográfica</option>
-                                <option>Ultra Rara</option>
-                                <option>Ilustração Rara</option>
-                                <option>Ilustração Especial Rara</option>
-                                <option>Rara Hiper</option>
-
-                            </select>
-                        </div>
-
-                        <div class="campo">
-                            <label>Idioma</label>
-
-                            <select id="idioma">
-
-                                <option value="">
-                                    Selecione
-                                </option>
-
-                                <option>Português</option>
-                                <option>Inglês</option>
-                                <option>Japonês</option>
-                                <option>Coreano</option>
-                                <option>Chinês</option>
-
-                            </select>
-                        </div>
-
-                        <div class="campo">
-                            <label>Condição</label>
-
-                            <select id="condicao">
-
-                                <option>Near Mint (NM)</option>
-                                <option>Lightly Played (LP)</option>
-                                <option>Moderately Played (MP)</option>
-                                <option>Heavily Played (HP)</option>
-                                <option>Damaged</option>
-
-                            </select>
-                        </div>
-
-                        <div class="campo">
-                            <label>Quantidade *</label>
-
-                            <input
-                                type="number"
-                                id="quantidade"
-                                value="1"
-                                min="1"
-                                required
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label>Preço de custo</label>
-
-                            <input
-                                type="number"
-                                id="custo"
-                                placeholder="0,00"
-                                step="0.01"
-                                min="0"
-                            >
-                        </div>
-
-                        <div class="campo">
-                            <label>Preço de venda</label>
-
-                            <input
-                                type="number"
-                                id="preco"
-                                placeholder="0,00"
-                                step="0.01"
-                                min="0"
-                            >
-                        </div>
-
-                        <div class="campo completo">
-                            <label>Foto da carta</label>
-
-                            <input
-                                type="file"
-                                id="foto"
-                                accept="image/*"
-                            >
-                        </div>
-
-                        <div class="campo completo">
-                            <label>Observações</label>
-
-                            <textarea
-                                id="observacoes"
-                                placeholder="Digite alguma observação sobre a carta..."
-                            ></textarea>
-                        </div>
-
+                        <div class="campo"><label>Nome da carta *</label><input type="text" id="nome" placeholder="Ex: Charizard" required></div>
+                        <div class="campo"><label>Número da carta</label><input type="text" id="numero" placeholder="Ex: 006/165"></div>
+                        <div class="campo"><label>Coleção *</label><input type="text" id="colecao" placeholder="Ex: Destinos de Paldea" required></div>
+                        <div class="campo"><label>Raridade</label><select id="raridade"><option value="">Selecione</option><option>Comum</option><option>Incomum</option><option>Rara</option><option>Holográfica</option><option>Ultra Rara</option><option>Ilustração Rara</option><option>Ilustração Especial Rara</option><option>Rara Hiper</option></select></div>
+                        <div class="campo"><label>Idioma</label><select id="idioma"><option value="">Selecione</option><option>Português</option><option>Inglês</option><option>Japonês</option><option>Coreano</option><option>Chinês</option></select></div>
+                        <div class="campo"><label>Condição</label><select id="condicao"><option>Near Mint (NM)</option><option>Lightly Played (LP)</option><option>Moderately Played (MP)</option><option>Heavily Played (HP)</option><option>Damaged</option></select></div>
+                        <div class="campo"><label>Quantidade *</label><input type="number" id="quantidade" value="1" min="1" required></div>
+                        <div class="campo"><label>Preço de custo</label><input type="number" id="custo" placeholder="0,00" step="0.01" min="0"></div>
+                        <div class="campo"><label>Preço de venda</label><input type="number" id="preco" placeholder="0,00" step="0.01" min="0"></div>
+                        <div class="campo completo"><label>Foto da carta</label><input type="file" id="foto" accept="image/*"><small style="margin-top:6px;color:#6b7280">O upload da foto será conectado ao armazenamento na próxima etapa.</small></div>
+                        <div class="campo completo"><label>Observações</label><textarea id="observacoes" placeholder="Digite alguma observação sobre a carta..."></textarea></div>
                     </div>
-
                     <div class="acoes-formulario">
-
-                        <button
-                            type="submit"
-                            class="botao"
-                        >
-                            💾 Salvar Carta
-                        </button>
-
-                        <button
-                            type="button"
-                            class="botao-secundario"
-                            onclick="mostrarTela('dashboard')"
-                        >
-                            Cancelar
-                        </button>
-
+                        <button id="botaoSalvar" type="submit" class="botao">💾 Salvar Carta</button>
+                        <button type="button" class="botao-secundario" onclick="mostrarTela('dashboard')">Cancelar</button>
                     </div>
-
                 </form>
-
             </div>
-
         </section>
 
-
-        <!-- ESTOQUE -->
         <section id="estoque" class="tela">
-
-            <div class="titulo">
-                <h2>Estoque</h2>
-                <p>Controle das cartas disponíveis.</p>
-            </div>
-
-            <div class="lista-cartas">
-
-                <div class="mensagem-vazia">
-                    <h3>Estoque vazio</h3>
-                    <p>As cartas cadastradas aparecerão aqui.</p>
-                </div>
-
-            </div>
-
+            <div class="titulo"><h2>Estoque</h2><p>Cartas atualmente disponíveis.</p></div>
+            <div class="lista-cartas"><div id="estoqueConteudo" class="mensagem-vazia">Carregando...</div></div>
         </section>
 
-
-        <!-- VENDAS -->
         <section id="vendas" class="tela">
-
-            <div class="titulo">
-                <h2>Vendas</h2>
-                <p>Controle suas vendas de cartas.</p>
-            </div>
-
-            <div class="lista-cartas">
-
-                <div class="mensagem-vazia">
-                    <h3>Nenhuma venda registrada</h3>
-                    <p>As vendas aparecerão aqui futuramente.</p>
-                </div>
-
-            </div>
-
+            <div class="titulo"><h2>Vendas</h2><p>Controle suas vendas de cartas.</p></div>
+            <div class="lista-cartas"><div class="mensagem-vazia"><h3>Nenhuma venda registrada</h3><p>A área de vendas será conectada ao estoque em uma próxima etapa.</p></div></div>
         </section>
 
-
-        <!-- RELATÓRIOS -->
         <section id="relatorios" class="tela">
-
-            <div class="titulo">
-                <h2>Relatórios</h2>
-                <p>Resumo financeiro e do seu acervo.</p>
-            </div>
-
-            <div class="lista-cartas">
-
-                <div class="mensagem-vazia">
-                    <h3>Relatórios</h3>
-                    <p>Em breve teremos gráficos e informações do seu acervo.</p>
-                </div>
-
-            </div>
-
+            <div class="titulo"><h2>Relatórios</h2><p>Resumo do seu acervo.</p></div>
+            <div class="lista-cartas"><div class="mensagem-vazia"><h3>Relatórios</h3><p>Os gráficos e indicadores serão adicionados nas próximas etapas.</p></div></div>
         </section>
-
     </main>
-
 </div>
 
-
 <script>
+    const SUPABASE_URL = 'https://txhktdwwxjdswtedupud.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_odjEzAe1A-F4ur1PsXIuRA_qomQzX44';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    let cartasCache = [];
 
     function mostrarTela(id, botao) {
-
-        const telas = document.querySelectorAll('.tela');
-
-        telas.forEach(function(tela) {
-            tela.classList.remove('ativa');
-        });
-
-        document.getElementById(id).classList.add('ativa');
-
-        const botoes = document.querySelectorAll('nav button');
-
-        botoes.forEach(function(item) {
-            item.classList.remove('ativo');
-        });
-
-        if (botao) {
-            botao.classList.add('ativo');
-        }
+        document.querySelectorAll('.tela').forEach(tela => tela.classList.remove('ativa'));
+        const selecionada = document.getElementById(id);
+        if (selecionada) selecionada.classList.add('ativa');
+        document.querySelectorAll('nav button').forEach(item => item.classList.remove('ativo'));
+        if (botao) botao.classList.add('ativo');
+        if (id === 'dashboard') atualizarDashboard();
     }
 
+    function moeda(valor) {
+        return Number(valor || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+    }
 
-    document.getElementById('formCarta').addEventListener('submit', function(event) {
+    function mostrarMensagem(tipo, texto) {
+        const erro = document.getElementById('mensagemErro');
+        const sucesso = document.getElementById('mensagemSucesso');
+        erro.style.display = 'none';
+        sucesso.style.display = 'none';
+        if (tipo === 'erro') { erro.textContent = texto; erro.style.display = 'block'; }
+        if (tipo === 'sucesso') { sucesso.textContent = texto; sucesso.style.display = 'block'; }
+    }
 
+    async function carregarCartas() {
+        const mensagem = document.getElementById('mensagemCartas');
+        if (mensagem) { mensagem.style.display = 'block'; mensagem.textContent = 'Carregando cartas...'; }
+        const { data, error } = await supabaseClient.from('cartas').select('*').order('created_at', { ascending:false });
+        if (error) {
+            if (mensagem) { mensagem.textContent = 'Não foi possível carregar as cartas: ' + error.message; }
+            console.error(error);
+            return;
+        }
+        cartasCache = data || [];
+        renderizarCartasFiltradas();
+        atualizarDashboard();
+        renderizarEstoque();
+    }
+
+    function renderizarCartasFiltradas() {
+        const busca = (document.getElementById('buscaCartas')?.value || '').toLowerCase().trim();
+        const filtradas = cartasCache.filter(carta => {
+            const texto = ((carta.nome || '') + ' ' + (carta.colecao || '') + ' ' + (carta.numero || '')).toLowerCase();
+            return texto.includes(busca);
+        });
+        const mensagem = document.getElementById('mensagemCartas');
+        const tabela = document.getElementById('tabelaCartas');
+        if (!filtradas.length) {
+            mensagem.style.display = 'block';
+            mensagem.innerHTML = '<h3>Nenhuma carta cadastrada</h3><p>Cadastre sua primeira carta pelo menu.</p>';
+            tabela.style.display = 'none';
+            return;
+        }
+        mensagem.style.display = 'none';
+        tabela.style.display = 'block';
+        tabela.innerHTML = '<table><thead><tr><th>Nome</th><th>Número</th><th>Coleção</th><th>Raridade</th><th>Idioma</th><th>Qtd.</th><th>Preço</th></tr></thead><tbody>' +
+            filtradas.map(c => '<tr><td><strong>' + escapar(c.nome) + '</strong></td><td>' + escapar(c.numero || '-') + '</td><td>' + escapar(c.colecao || '-') + '</td><td>' + escapar(c.raridade || '-') + '</td><td>' + escapar(c.idioma || '-') + '</td><td><span class="status">' + Number(c.quantidade || 0) + '</span></td><td>' + moeda(c.preco) + '</td></tr>').join('') +
+            '</tbody></table>';
+    }
+
+    function renderizarEstoque() {
+        const el = document.getElementById('estoqueConteudo');
+        if (!el) return;
+        const disponiveis = cartasCache.filter(c => Number(c.quantidade || 0) > 0);
+        if (!disponiveis.length) { el.innerHTML = '<h3>Estoque vazio</h3><p>As cartas cadastradas aparecerão aqui.</p>'; return; }
+        el.innerHTML = '<div class="tabela-wrap"><table><thead><tr><th>Nome</th><th>Coleção</th><th>Quantidade</th><th>Preço de venda</th></tr></thead><tbody>' +
+            disponiveis.map(c => '<tr><td><strong>' + escapar(c.nome) + '</strong></td><td>' + escapar(c.colecao || '-') + '</td><td>' + Number(c.quantidade || 0) + '</td><td>' + moeda(c.preco) + '</td></tr>').join('') +
+            '</tbody></table></div>';
+    }
+
+    function escapar(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+    }
+
+    function atualizarDashboard() {
+        const totalUnidades = cartasCache.reduce((s, c) => s + Number(c.quantidade || 0), 0);
+        const valor = cartasCache.reduce((s, c) => s + (Number(c.quantidade || 0) * Number(c.preco || 0)), 0);
+        document.getElementById('totalCartas').textContent = cartasCache.length;
+        document.getElementById('totalEstoque').textContent = totalUnidades;
+        document.getElementById('valorAcervo').textContent = moeda(valor);
+    }
+
+    document.getElementById('formCarta').addEventListener('submit', async function(event) {
         event.preventDefault();
+        const botao = document.getElementById('botaoSalvar');
+        botao.disabled = true;
+        botao.textContent = '⏳ Salvando...';
+        mostrarMensagem('', '');
 
-        const nome = document.getElementById('nome').value;
-        const quantidade = Number(document.getElementById('quantidade').value);
-        const preco = Number(document.getElementById('preco').value) || 0;
+        const carta = {
+            nome: document.getElementById('nome').value.trim(),
+            numero: document.getElementById('numero').value.trim() || null,
+            colecao: document.getElementById('colecao').value.trim(),
+            raridade: document.getElementById('raridade').value || null,
+            idioma: document.getElementById('idioma').value || null,
+            condicao: document.getElementById('condicao').value || null,
+            quantidade: Number(document.getElementById('quantidade').value) || 0,
+            custo: Number(document.getElementById('custo').value) || 0,
+            preco: Number(document.getElementById('preco').value) || 0,
+            foto_url: null,
+            observacoes: document.getElementById('observacoes').value.trim() || null
+        };
 
-        alert(
-            'Carta cadastrada com sucesso!\\n\\n' +
-            'Carta: ' + nome + '\\n' +
-            'Quantidade: ' + quantidade + '\\n' +
-            'Preço: R$ ' + preco.toFixed(2)
-        );
+        const { data, error } = await supabaseClient.from('cartas').insert([carta]).select().single();
+        if (error) {
+            console.error(error);
+            mostrarMensagem('erro', 'Não foi possível salvar a carta: ' + error.message);
+            botao.disabled = false;
+            botao.textContent = '💾 Salvar Carta';
+            return;
+        }
 
+        console.log('Carta salva:', data);
         document.getElementById('formCarta').reset();
-
         document.getElementById('quantidade').value = 1;
+        mostrarMensagem('sucesso', 'Carta cadastrada com sucesso no banco de dados!');
+        cartasCache.unshift(data);
+        atualizarDashboard();
+        renderizarEstoque();
+        renderizarCartasFiltradas();
+        botao.disabled = false;
+        botao.textContent = '💾 Salvar Carta';
 
-        mostrarTela('dashboard');
-
+        setTimeout(() => mostrarTela('cartas'), 700);
     });
 
+    document.addEventListener('DOMContentLoaded', carregarCartas);
 </script>
-
 </body>
 </html>
