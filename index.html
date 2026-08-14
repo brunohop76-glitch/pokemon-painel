@@ -247,19 +247,27 @@
         botao.textContent = '⏳ Salvando...';
         mostrarMensagem('', '');
 
-        const carta = {
-            nome: document.getElementById('nome').value.trim(),
-            numero: document.getElementById('numero').value.trim() || null,
-            colecao: document.getElementById('colecao').value.trim(),
-            raridade: document.getElementById('raridade').value || null,
-            idioma: document.getElementById('idioma').value || null,
-            condicao: document.getElementById('condicao').value || null,
-            quantidade: Number(document.getElementById('quantidade').value) || 0,
-            custo: Number(document.getElementById('custo').value) || 0,
-            preco: Number(document.getElementById('preco').value) || 0,
-            foto_url: null,
-            observacoes: document.getElementById('observacoes').value.trim() || null
-        };
+ const carta = {
+    nome: document.getElementById('nome').value.trim(),
+    numero: document.getElementById('numero').value.trim() || null,
+
+    'coleção': document.getElementById('colecao').value.trim(),
+
+    raridade: document.getElementById('raridade').value || null,
+    idioma: document.getElementById('idioma').value || null,
+
+    'condição': document.getElementById('condicao').value || null,
+
+    quantidade: Number(document.getElementById('quantidade').value) || 0,
+
+    custo: Number(document.getElementById('custo').value) || 0,
+
+    'preço': Number(document.getElementById('preco').value) || 0,
+
+    foto_url: null,
+
+    'observações': document.getElementById('observacoes').value.trim() || null
+};
 
         const { data, error } = await supabaseClient.from('cartas').insert([carta]).select().single();
         if (error) {
