@@ -1,0 +1,56 @@
+name: Upgrade card management
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar melhorias no painel
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          if 'function editarCarta(id)' not in s:
+              s = s.replace('let cartas=[];', 'let cartas=[];\nlet cartaEditandoId=null;')
+
+              s = s.replace('<section id="cadastro" class="tela"><div class="titulo"><h2>Cadastrar Carta</h2><p>Adicione uma nova carta ao seu acervo.</p></div>', '<section id="cadastro" class="tela"><div class="titulo"><h2 id="tituloCadastro">Cadastrar Carta</h2><p id="subtituloCadastro">Adicione uma nova carta ao seu acervo.</p></div>')
+              s = s.replace('<button id="salvar" class="btn" type="button" onclick="salvarCarta()">💾 Salvar Carta</button>', '<button id="salvar" class="btn" type="button" onclick="salvarCarta()">💾 Salvar Carta</button>')
+              s = s.replace('<button class="btn sec" type="button" onclick="abrir(\'dashboard\')">Cancelar</button>', '<button class="btn sec" type="button" onclick="cancelarEdicao()">Cancelar</button>')
+
+              old_render = re.search(r'function renderizar\(\)\{.*?\}\nfunction atualizar\(\)', s, re.S)
+              new_render = r'''function renderizar(){const busca=(document.getElementById('busca')?.value||'').toLowerCase();const arr=cartas.filter(c=>((c.nome||'')+' '+(c.numero||'')+' '+campo(c,'coleção','colecao')).toLowerCase().includes(busca));const el=document.getElementById('lista');if(!el)return;if(!arr.length){el.innerHTML='<div class="vazio"><h3>Nenhuma carta cadastrada</h3><p>Cadastre sua primeira carta.</p></div>';return;}el.innerHTML='<div class="tabela"><table><thead><tr><th>Foto</th><th>Nome</th><th>Número</th><th>Coleção</th><th>Raridade</th><th>Idioma</th><th>Qtd.</th><th>Preço</th><th>Ações</th></tr></thead><tbody>'+arr.map(c=>{const foto=c.foto_url?'<img class="foto-mini" src="'+esc(c.foto_url)+'" alt="'+esc(c.nome)+'">':'<div class="sem-foto">Sem foto</div>';return '<tr><td>'+foto+'</td><td><strong>'+esc(c.nome)+'</strong></td><td>'+esc(c.numero||'-')+'</td><td>'+esc(campo(c,'coleção','colecao','-'))+'</td><td>'+esc(c.raridade||'-')+'</td><td>'+esc(c.idioma||'-')+'</td><td><span class="badge">'+Number(c.quantidade||0)+'</span></td><td>'+dinheiro(campo(c,'preço','preco',0))+'</td><td><div class="acoes-linha"><button class="btn pequeno azul" onclick="editarCarta('+c.id+')">✏️ Editar</button><button class="btn pequeno" onclick="excluirCarta('+c.id+')">🗑️ Excluir</button></div></td></tr>';}).join('')+'</tbody></table></div>';}
+function atualizar()'''
+              if old_render:
+                  s = s[:old_render.start()] + new_render + s[old_render.end()-len('function atualizar()'):]
+
+              marker = 'function mensagem(tipo,texto)'
+              edit_code = r'''function editarCarta(id){const c=cartas.find(x=>Number(x.id)===Number(id));if(!c)return;cartaEditandoId=c.id;document.getElementById('nome').value=c.nome||'';document.getElementById('numero').value=c.numero||'';document.getElementById('colecao').value=campo(c,'coleção','colecao','');document.getElementById('raridade').value=c.raridade||'';document.getElementById('idioma').value=c.idioma||'';document.getElementById('condicao').value=campo(c,'condição','condicao','Near Mint (NM)');document.getElementById('quantidade').value=Number(c.quantidade||1);document.getElementById('custo').value=String(c.custo??'').replace('.',',');document.getElementById('preco').value=String(campo(c,'preço','preco','')).replace('.',',');document.getElementById('observacoes').value=campo(c,'observações','observacoes','');const preview=document.getElementById('previewFoto');if(c.foto_url){preview.src=c.foto_url;preview.style.display='block';}else{preview.style.display='none';preview.removeAttribute('src');}document.getElementById('tituloCadastro').textContent='Editar Carta';document.getElementById('subtituloCadastro').textContent='Altere os dados e salve as modificações.';document.getElementById('salvar').textContent='💾 Salvar Alterações';mensagem('','');abrir('cadastro');window.scrollTo({top:0,behavior:'smooth'});}
+function cancelarEdicao(){cartaEditandoId=null;document.getElementById('form').reset();document.getElementById('quantidade').value=1;document.getElementById('condicao').value='Near Mint (NM)';document.getElementById('tituloCadastro').textContent='Cadastrar Carta';document.getElementById('subtituloCadastro').textContent='Adicione uma nova carta ao seu acervo.';document.getElementById('salvar').textContent='💾 Salvar Carta';const preview=document.getElementById('previewFoto');preview.style.display='none';preview.removeAttribute('src');mensagem('','');abrir('dashboard');}
+function mensagem(tipo,texto)'''
+              s = s.replace(marker, edit_code)
+
+              old_save = re.search(r'async function salvarCarta\(\)\{.*?\}\ncarregarCartas\(\);', s, re.S)
+              new_save = r'''async function salvarCarta(){const botao=document.getElementById('salvar');const form=document.getElementById('form');if(!form.reportValidity())return;botao.disabled=true;botao.textContent=cartaEditandoId?'⏳ Salvando alterações...':'⏳ Salvando...';mensagem('','');let fotoEnviada=null;let fotoAntiga=null;try{const arquivo=document.getElementById('foto').files?.[0]||null;const existente=cartaEditandoId?cartas.find(x=>Number(x.id)===Number(cartaEditandoId)):null;fotoAntiga=existente?.foto_url||null;if(arquivo)fotoEnviada=await enviarFoto(arquivo);const carta={nome:document.getElementById('nome').value.trim(),numero:document.getElementById('numero').value.trim()||null,'coleção':document.getElementById('colecao').value.trim(),raridade:document.getElementById('raridade').value||null,idioma:document.getElementById('idioma').value||null,'condição':document.getElementById('condicao').value||null,quantidade:Number(document.getElementById('quantidade').value)||1,custo:numeroBR('custo'),'preço':numeroBR('preco'),foto_url:fotoEnviada?.url||fotoAntiga||null,'observações':document.getElementById('observacoes').value.trim()||null};let erro;if(cartaEditandoId){const resultado=await comTimeout(supabaseClient.from('cartas').update(carta).eq('id',cartaEditandoId),10000);erro=resultado.error;}else{const resultado=await comTimeout(supabaseClient.from('cartas').insert([carta]),10000);erro=resultado.error;}if(erro)throw erro;if(arquivo&&fotoAntiga&&fotoEnviada){const parte=fotoAntiga.split('/cartas/')[1];if(parte){try{await supabaseClient.storage.from(STORAGE_BUCKET).remove(['cartas/'+parte]);}catch(e){console.warn('Não foi possível remover a foto antiga:',e);}}}const eraEdicao=!!cartaEditandoId;cartaEditandoId=null;form.reset();document.getElementById('quantidade').value=1;document.getElementById('condicao').value='Near Mint (NM)';const preview=document.getElementById('previewFoto');preview.style.display='none';preview.removeAttribute('src');document.getElementById('tituloCadastro').textContent='Cadastrar Carta';document.getElementById('subtituloCadastro').textContent='Adicione uma nova carta ao seu acervo.';botao.disabled=false;botao.textContent='💾 Salvar Carta';mensagem('ok',eraEdicao?'✅ Carta atualizada com sucesso!':'✅ Carta cadastrada com sucesso!');await carregarCartas();abrir('cartas');}catch(error){console.error('Erro ao salvar:',error);if(fotoEnviada?.caminho){try{await supabaseClient.storage.from(STORAGE_BUCKET).remove([fotoEnviada.caminho]);}catch(removeError){console.error(removeError);}}mensagem('erro','Não foi possível salvar a carta: '+(error?.message||String(error)));botao.disabled=false;botao.textContent=cartaEditandoId?'💾 Salvar Alterações':'💾 Salvar Carta';}}
+carregarCartas();'''
+              if old_save:
+                  s = s[:old_save.start()] + new_save
+
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commitar alteração
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Adicionar editar e excluir cartas"
+          git push
