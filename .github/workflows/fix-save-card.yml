@@ -1,0 +1,124 @@
+name: Corrigir salvamento de cartas
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-save-card:
+    if: "!contains(github.event.head_commit.message, 'Fix salvar carta')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Corrigir função saveCard
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          start = text.find('async function saveCard(){')
+          end = text.find('function renderStock()', start)
+
+          if start == -1 or end == -1:
+              raise SystemExit('Não encontrei a função saveCard no index.html')
+
+          new_function = r'''async function saveCard(){
+            const form=document.getElementById('form');
+            if(!form.reportValidity()) return;
+
+            const saveBtn=document.getElementById('save');
+            saveBtn.disabled=true;
+            saveBtn.textContent='⏳ Salvando...';
+
+            try{
+              const nameEl=document.getElementById('name');
+              const numberEl=document.getElementById('number');
+              const setEl=document.getElementById('set');
+              const rarityEl=document.getElementById('rarity');
+              const langEl=document.getElementById('lang');
+              const conditionEl=document.getElementById('condition');
+              const qtyEl=document.getElementById('qty');
+              const costEl=document.getElementById('cost');
+              const sellEl=document.getElementById('sell');
+              const photoEl=document.getElementById('photo');
+              const notesEl=document.getElementById('notes');
+
+              const value=(el)=>el ? String(el.value ?? '').trim() : '';
+
+              if(!nameEl || !setEl || !rarityEl || !langEl || !conditionEl || !qtyEl || !costEl || !sellEl || !photoEl){
+                throw new Error('Algum campo do formulário não foi encontrado. Recarregue a página.');
+              }
+
+              let fotoUrl=null;
+              if(photoEl.files && photoEl.files[0]){
+                fotoUrl=await upload(photoEl.files[0]);
+              }
+
+              const old=editId ? cards.find(c=>c.id==editId) : null;
+
+              const data={
+                nome:value(nameEl),
+                numero:value(numberEl)||null,
+                'coleção':value(setEl),
+                raridade:rarityEl.value||null,
+                idioma:langEl.value||null,
+                'condição':conditionEl.value||null,
+                quantidade:Number(qtyEl.value)||1,
+                custo:num(costEl.value),
+                'preço':num(sellEl.value)||Number(autoMarket||0),
+                foto_url:fotoUrl||old?.foto_url||autoImage||null,
+                'observações':value(notesEl)||null
+              };
+
+              if(!data.nome) throw new Error('Informe o nome da carta.');
+              if(!data['coleção']) throw new Error('Informe a coleção da carta.');
+
+              const r=editId
+                ? await db.from('cartas').update(data).eq('id',editId)
+                : await db.from('cartas').insert([data]);
+
+              if(r.error) throw r.error;
+
+              const msg=document.getElementById('formMsg');
+              msg.className='msg ok';
+              msg.textContent=editId ? 'Carta atualizada!' : 'Carta cadastrada com imagem e preço automáticos!';
+              msg.style.display='block';
+
+              await loadCards();
+              setTimeout(closeForm,500);
+            }catch(e){
+              console.error('Erro ao salvar carta:',e);
+              const msg=document.getElementById('formMsg');
+              msg.className='msg err';
+              msg.textContent='Erro: '+(e?.message||'Não foi possível salvar a carta.');
+              msg.style.display='block';
+            }finally{
+              saveBtn.disabled=false;
+              saveBtn.textContent=editId ? '💾 Salvar alterações' : '💾 Salvar carta';
+            }
+          }
+          '''
+
+          path.write_text(text[:start] + new_function + text[end:], encoding='utf-8')
+          print('Função saveCard corrigida com sucesso.')
+
+      - name: Publicar correção
+        run: |
+          if git diff --quiet; then
+            echo "Nenhuma alteração necessária."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix salvar carta: corrigir campos undefined"
+          git push
