@@ -38,7 +38,81 @@ function editCard(id){const c=cards.find(x=>x.id==id);if(!c)return;editId=id;nam
 async function removeCard(id){const c=cards.find(x=>x.id==id);if(!c||!confirm('Excluir '+c.nome+'?'))return;const r=await db.from('cartas').delete().eq('id',id);if(r.error){alert('Erro ao excluir: '+r.error.message);return}await loadCards()}
 function num(v){return Number(String(v||'0').replace(/\./g,'').replace(',','.'))||0}
 async function upload(file){const ext=(file.name.split('.').pop()||'jpg').toLowerCase(),path='cartas/'+Date.now()+'.'+ext,r=await db.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type});if(r.error)throw r.error;return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}
-async function saveCard(){if(!document.getElementById('form').reportValidity())return;const saveBtn=document.getElementById('save');saveBtn.disabled=true;saveBtn.textContent='⏳ Salvando...';try{let fotoUrl=null;if(photo.files[0])fotoUrl=await upload(photo.files[0]);const old=editId?cards.find(c=>c.id==editId):null;const data={nome:name.value.trim(),numero:number.value.trim()||null,'coleção':set.value.trim(),raridade:rarity.value||null,idioma:lang.value||null,'condição':condition.value||null,quantidade:Number(qty.value)||1,custo:num(cost.value),'preço':num(sell.value)||Number(autoMarket||0),foto_url:fotoUrl||old?.foto_url||autoImage||null,'observações':notes.value.trim()||null};const r=editId?await db.from('cartas').update(data).eq('id',editId):await db.from('cartas').insert([data]);if(r.error)throw r.error;const msg=document.getElementById('formMsg');msg.className='msg ok';msg.textContent=editId?'Carta atualizada!':'Carta cadastrada com imagem e preço automáticos!';msg.style.display='block';await loadCards();setTimeout(closeForm,500)}catch(e){const msg=document.getElementById('formMsg');msg.className='msg err';msg.textContent='Erro: '+e.message;msg.style.display='block'}finally{saveBtn.disabled=false;saveBtn.textContent=editId?'💾 Salvar alterações':'💾 Salvar carta'}}
+async function saveCard(){
+  const form=document.getElementById('form');
+  if(!form.reportValidity()) return;
+
+  const saveBtn=document.getElementById('save');
+  saveBtn.disabled=true;
+  saveBtn.textContent='⏳ Salvando...';
+
+  try{
+    const nameEl=document.getElementById('name');
+    const numberEl=document.getElementById('number');
+    const setEl=document.getElementById('set');
+    const rarityEl=document.getElementById('rarity');
+    const langEl=document.getElementById('lang');
+    const conditionEl=document.getElementById('condition');
+    const qtyEl=document.getElementById('qty');
+    const costEl=document.getElementById('cost');
+    const sellEl=document.getElementById('sell');
+    const photoEl=document.getElementById('photo');
+    const notesEl=document.getElementById('notes');
+
+    const value=(el)=>el ? String(el.value ?? '').trim() : '';
+
+    if(!nameEl || !setEl || !rarityEl || !langEl || !conditionEl || !qtyEl || !costEl || !sellEl || !photoEl){
+      throw new Error('Algum campo do formulário não foi encontrado. Recarregue a página.');
+    }
+
+    let fotoUrl=null;
+    if(photoEl.files && photoEl.files[0]){
+      fotoUrl=await upload(photoEl.files[0]);
+    }
+
+    const old=editId ? cards.find(c=>c.id==editId) : null;
+
+    const data={
+      nome:value(nameEl),
+      numero:value(numberEl)||null,
+      'coleção':value(setEl),
+      raridade:rarityEl.value||null,
+      idioma:langEl.value||null,
+      'condição':conditionEl.value||null,
+      quantidade:Number(qtyEl.value)||1,
+      custo:num(costEl.value),
+      'preço':num(sellEl.value)||Number(autoMarket||0),
+      foto_url:fotoUrl||old?.foto_url||autoImage||null,
+      'observações':value(notesEl)||null
+    };
+
+    if(!data.nome) throw new Error('Informe o nome da carta.');
+    if(!data['coleção']) throw new Error('Informe a coleção da carta.');
+
+    const r=editId
+      ? await db.from('cartas').update(data).eq('id',editId)
+      : await db.from('cartas').insert([data]);
+
+    if(r.error) throw r.error;
+
+    const msg=document.getElementById('formMsg');
+    msg.className='msg ok';
+    msg.textContent=editId ? 'Carta atualizada!' : 'Carta cadastrada com imagem e preço automáticos!';
+    msg.style.display='block';
+
+    await loadCards();
+    setTimeout(closeForm,500);
+  }catch(e){
+    console.error('Erro ao salvar carta:',e);
+    const msg=document.getElementById('formMsg');
+    msg.className='msg err';
+    msg.textContent='Erro: '+(e?.message||'Não foi possível salvar a carta.');
+    msg.style.display='block';
+  }finally{
+    saveBtn.disabled=false;
+    saveBtn.textContent=editId ? '💾 Salvar alterações' : '💾 Salvar carta';
+  }
+}
 function renderStock(){document.getElementById('stockGrid').innerHTML=cards.length?cards.map(cardHTML).join(''):'<div class="empty">Nenhuma carta cadastrada.</div>'}
 function renderDash(){const total=cards.reduce((s,c)=>s+Number(c.quantidade||0),0),value=cards.reduce((s,c)=>s+Number(price(c)||0)*Number(c.quantidade||0),0);document.getElementById('dashGrid').innerHTML=[['🃏','Cartas',cards.length],['📦','Unidades',total],['💰','Valor do acervo',money(value)],['🔴','Kanto',ownedDex().length+' / 151']].map(x=>'<article class="card" style="padding:20px"><div style="font-size:28px">'+x[0]+'</div><div class="meta">'+x[1]+'</div><div class="price">'+x[2]+'</div></article>').join('')}
 function loadManual(){try{dexManual=JSON.parse(localStorage.getItem('odtcg_kanto')||'[]').map(Number)}catch(e){dexManual=[]}}function saveManual(){localStorage.setItem('odtcg_kanto',JSON.stringify([...new Set(dexManual)]))}function ownedDex(){return [...new Set([...dexManual,...P.map((n,i)=>cards.some(c=>norm(c.nome)===norm(n))?i+1:null).filter(Boolean)])]}function dexButtons(){['all','owned','missing'].forEach(id=>document.getElementById(id).classList.toggle('active',dexView===(id==='all'?'all':id)))}function renderDex(){loadManual();const own=ownedDex(),q=(document.getElementById('dexSearch')?.value||'').toLowerCase();document.getElementById('dexCount').textContent=own.length+' / 151';document.getElementById('dexBar').style.width=(own.length/151*100)+'%';const a=P.map((name,i)=>({name,id:i+1,own:own.includes(i+1)})).filter(x=>(!q||x.name.toLowerCase().includes(q)||String(x.id).includes(q))&&(dexView==='all'||dexView==='owned'&&x.own||dexView==='missing'&&!x.own));document.getElementById('dexGrid').innerHTML=a.map(x=>'<article class="pokeCard '+(x.own?'owned':'')+'"><div class="pokeImg"><span class="pokeNum">#'+String(x.id).padStart(3,'0')+'</span><span class="pokeCheck">✓ TENHO</span><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'+x.id+'.png"></div><div class="pokeBody"><div class="pokeName">'+esc(x.name)+'</div><div class="pokeStatus">'+(x.own?'Na coleção':'Ainda não tenho')+'</div><button onclick="toggleDex('+x.id+')">'+(x.own?'✓ Marcar como faltando':'＋ Marcar como tenho')+'</button></div></article>').join('')}
