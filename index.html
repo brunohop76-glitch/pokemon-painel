@@ -269,6 +269,93 @@ body{font-family:Arial,Inter,sans-serif!important}
   .pokeGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
 
+/* O DIÁRIO TCG — TEMA RETRO LARANJA / FIRE RED */
+:root{
+  --retro-bg:#1b0804;
+  --retro-bg2:#351107;
+  --retro-panel:#3b1609;
+  --retro-panel2:#281008;
+  --retro-orange:#d85a16;
+  --retro-orange2:#f07a18;
+  --retro-gold:#ffbf22;
+  --retro-cream:#ffe5b0;
+  --retro-text:#fff4dc;
+  --retro-muted:#d5ad79;
+  --retro-border:#a94f12;
+}
+html,body{background:var(--retro-bg)!important;color:var(--retro-text)!important;overflow-x:hidden!important}
+body{font-family:Arial,Inter,sans-serif!important}
+.app{min-height:100vh!important;background:radial-gradient(circle at 70% 0,rgba(190,72,12,.35),transparent 28%),radial-gradient(circle at 10% 100%,rgba(104,35,8,.5),transparent 35%),linear-gradient(135deg,#1a0703,#351207 55%,#160603)!important}
+.top{height:64px!important;background:rgba(38,12,5,.97)!important;border-bottom:3px solid var(--retro-gold)!important;padding:0 24px!important}
+.brand{color:var(--retro-text)!important}.brand span{color:var(--retro-gold)!important}
+.pill{border-color:var(--retro-orange)!important;background:#321207!important;color:var(--retro-cream)!important}
+.topActions .btn,.btn{background:linear-gradient(135deg,#c94313,#ef6d18)!important;border:1px solid var(--retro-gold)!important;color:#fff7e7!important;box-shadow:0 4px 12px rgba(0,0,0,.3)!important}
+.btn.dark{background:#301107!important;border-color:#9d4a13!important}
+.layout{grid-template-columns:245px 1fr!important}
+.side{background:linear-gradient(180deg,rgba(53,19,8,.98),rgba(31,9,4,.98))!important;border-right:3px solid var(--retro-gold)!important}
+.side h3{color:#f1bd67!important}
+.nav{color:var(--retro-cream)!important}
+.nav:hover,.nav.active{background:linear-gradient(90deg,#a92f13,#68200d)!important;color:#fff!important;border-left-color:var(--retro-gold)!important}
+.main{background:transparent!important}
+.title h1,.titleRow h1{color:#fff7e8!important}
+.title p,.meta,.count{color:var(--retro-muted)!important}
+.search,.pokeTools input,.field input,.field select,.field textarea,.lookupTop input{background:#210a05!important;border-color:#9b4b13!important;color:#fff2d6!important}
+.search::placeholder,.pokeTools input::placeholder,.lookupTop input::placeholder{color:#b9895d!important}
+.filters .chip,.chip{background:#321207!important;border-color:#a84d12!important;color:#ffe2ae!important}
+.chip.active{background:#c74714!important;border-color:var(--retro-gold)!important;color:#fff!important;box-shadow:0 3px 12px rgba(0,0,0,.25)!important}
+.content{grid-template-columns:215px minmax(0,1fr)!important}
+.filterbox,.lookup,.odtcg-section{background:linear-gradient(180deg,#3a1509,#241006)!important;border-color:#a84e13!important}
+.filterbox select{background:#210a05!important;border-color:#9b4b13!important;color:#fff0d0!important}
+.grid{gap:14px!important}
+.card{background:linear-gradient(180deg,#43190a,#230d06)!important;border-color:#a64d13!important;box-shadow:0 7px 18px rgba(0,0,0,.38)!important}
+.card:hover{border-color:var(--retro-gold)!important}
+.tag{background:#c54412!important}
+.stock{color:#8ee48e!important}
+.empty{border-color:#a24c13!important;color:#d2a16b!important}
+.drawer{background:rgba(20,5,2,.86)!important}
+.modal{background:#2a1007!important;border-color:#a64d13!important}
+.modalHead{border-color:#71340e!important}
+.preview,.marketBox{background:#210a05!important;border-color:#8f4312!important}
+.pokeHero{background:linear-gradient(135deg,#4a1808,#241006)!important;border-color:#a94f12!important}
+.pokeHero p,.pokeStatus{color:#d5ad79!important}
+.progress{background:#210a05!important}.progress span{background:linear-gradient(90deg,#c94313,#ffbd22)!important}
+.pokeTools button{background:#321207!important;border-color:#9e4b13!important;color:#ffe1ad!important}
+.pokeTools button.active{background:#c74714!important;color:#fff!important}
+.pokeCard{background:linear-gradient(180deg,#42180a,#230c05)!important;border-color:#a24c13!important}
+.pokeCard.owned{border-color:#69bb52!important}
+.pokeImg{background:radial-gradient(circle,#7a2d0d,#230a05 72%)!important}
+.pokeBody button{background:#321207!important;border-color:#9e4b13!important;color:#ffe0a8!important}
+.pokeCard.owned .pokeBody button{background:#203e18!important;border-color:#4d9239!important;color:#d9ffcc!important}
+.odtcg-nav-badge{background:#e05a16!important;color:#fff!important}
+.nav.odtcg-highlight:hover,.nav.odtcg-highlight.active{background:linear-gradient(90deg,#8f2b0d,#4b1708)!important}
+.btn.odtcg-orange{background:linear-gradient(135deg,#c94313,#ef7819)!important}
+/* evita que o conteúdo fique atrás do menu no celular */
+@media(max-width:1000px){
+  .layout{display:block!important}
+  .side{position:sticky!important;top:64px!important;width:100%!important;height:58px!important;min-height:58px!important;padding:6px 10px!important;display:flex!important;align-items:center!important;gap:4px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;z-index:19!important}
+  .side h3{display:none!important}
+  .nav{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;align-items:center!important;margin:0 2px!important;padding:10px 12px!important;min-height:44px!important}
+  .nav:hover,.nav.active{padding-left:12px!important;border-left:0!important;border-bottom:3px solid var(--retro-gold)!important}
+  .main{width:100%!important;max-width:none!important;padding:20px 14px 32px!important;overflow:hidden!important}
+  .titleRow{display:block!important;margin-bottom:16px!important}
+  .title h1{font-size:28px!important}
+  .controls{display:flex!important;justify-content:stretch!important;margin-top:12px!important}
+  .controls .search{flex:1!important;min-width:0!important}
+  .content{grid-template-columns:1fr!important}
+  .filterbox{position:static!important}
+}
+@media(max-width:650px){
+  .top{height:56px!important;padding:0 10px!important}
+  .side{top:56px!important;height:54px!important;min-height:54px!important}
+  .main{padding:18px 10px 28px!important}
+  .brand{font-size:17px!important}
+  .topActions .btn{font-size:0!important;padding:9px 12px!important}
+  .topActions .btn:before{content:'+'!important;font-size:20px!important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .cardImg{height:210px!important}
+  .pokeGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
 </style>
 </head>
 <body>
