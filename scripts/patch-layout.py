@@ -31,9 +31,8 @@ s = re.sub(r'<aside class="side">.*?</aside>', nav, s, count=1, flags=re.S)
 
 # ================================================================
 # CORREÇÃO DOS SETS / COLEÇÕES
-# Não usamos mais api.pokemontcg.io aqui, pois a API pode exigir
-# chave e retornar 401. O sistema passa a usar diretamente o
-# dataset público e oficial mantido pela PokemonTCG no GitHub.
+# O catálogo passa a usar diretamente o dataset público mantido
+# pela PokemonTCG no GitHub, sem depender da API que pode responder 401.
 # ================================================================
 if "/* Fix Sets via GitHub dataset */" not in s:
     s = s.replace(
@@ -84,8 +83,7 @@ function setSearchAliases(s){
     'megaevolucao':'Mega Evolution'
   };
   const base=normalizeSetSearch(`${s.name||''} ${s.series||''} ${s.id||''} ${s.ptcgoCode||''}`);
-  const name=normalizeSetSearch(s.name||'');
-  const extra=Object.entries(aliases).filter(([k])=>base.includes(k)||name.includes(k)).map(([,v])=>v).join(' ');
+  const extra=Object.entries(aliases).filter(([k])=>base.includes(k)).map(([,v])=>v).join(' ');
   return `${base} ${normalizeSetSearch(extra)}`;
 }
 function renderSets(){
@@ -125,12 +123,11 @@ function renderSets(){
   }
 }'''
 
-    s = re.sub(r"async function loadSets\(force=false\)\{.*?\n\}", load_sets, s, count=1, flags=re.S)
-    s = re.sub(r"function renderSets\(\)\{.*?\n\}", render_sets, s, count=1, flags=re.S)
-    s = re.sub(r"async function loadSetCards\(id\)\{.*?\n\}", load_cards, s, count=1, flags=re.S)
+    s = re.sub(r"async function loadSets\(force=false\)\{.*?\n\}", lambda m: load_sets, s, count=1, flags=re.S)
+    s = re.sub(r"function renderSets\(\)\{.*?\n\}", lambda m: render_sets, s, count=1, flags=re.S)
+    s = re.sub(r"async function loadSetCards\(id\)\{.*?\n\}", lambda m: load_cards, s, count=1, flags=re.S)
 
-    marker = "/* Fix Sets via GitHub dataset */"
-    s = s.replace("<script>\n", "<script>\n" + marker + "\n", 1)
+    s = s.replace("<script>\n", "<script>\n/* Fix Sets via GitHub dataset */\n", 1)
 
 p.write_text(s, encoding="utf-8")
 print("Layout e integração dos Sets corrigidos com sucesso.")
