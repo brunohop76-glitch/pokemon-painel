@@ -112,7 +112,6 @@
       .odtcg-section h2{color:#fff0d2!important}.odtcg-section p{color:#d6a875!important}
       .odtcg-nav-badge{background:#d83b1e!important;border:1px solid #ffbf27!important}
 
-      /* MOBILE: o menu fica em uma faixa própria, sem sobrepor o conteúdo */
       @media(max-width:1000px){
         .layout{display:flex!important;flex-direction:column!important;min-height:0!important}
         .side{
@@ -171,9 +170,28 @@
     });
   }
 
+  function addCardsNav(){
+    const side=$('.side');
+    if(!side || side.querySelector('.odtcg-cards-nav')) return;
+    const buttons=$$('.nav',side);
+    const minhas=buttons.find(b=>/minhas\s+cartas/i.test(b.textContent||''));
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='nav odtcg-cards-nav';
+    btn.innerHTML='🃏 Cartas TCG';
+    btn.title='Abrir catálogo de cartas Pokémon TCG';
+    btn.onclick=function(){ location.href='cartas.html'; };
+    if(minhas && minhas.parentNode){
+      minhas.insertAdjacentElement('afterend',btn);
+    }else{
+      side.appendChild(btn);
+    }
+  }
+
   function run(){
     addRetroTheme();
     normalizeNav();
+    addCardsNav();
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(run,50));
