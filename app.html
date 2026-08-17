@@ -46,6 +46,46 @@
 @media(max-width:1000px){#cartas .titleRow{display:block}.#cartas .controls{margin-top:14px}.#cartas .content{grid-template-columns:1fr}.#cartas .filterbox{position:static}.#cartas #cardsGrid>.empty{min-height:150px}}
 @media(max-width:650px){#cartas .controls{grid-template-columns:1fr}.#cartas .controls .btn{width:100%}}
 
+
+/* O DIÁRIO TCG — TEMA RETRO LARANJA DEFINITIVO */
+:root{--retro-bg:#170603;--retro-bg2:#321006;--retro-panel:#3d1608;--retro-orange:#e45b16;--retro-orange2:#ff7a18;--retro-gold:#ffc42a;--retro-text:#fff4df;--retro-muted:#d9ad78}
+html,body{background:#170603!important;color:var(--retro-text)!important}
+body{font-family:Arial,Inter,sans-serif!important}
+.app{background:radial-gradient(circle at 78% 0,rgba(239,92,20,.42),transparent 32%),radial-gradient(circle at 5% 100%,rgba(116,34,7,.55),transparent 38%),linear-gradient(135deg,#180603,#3a1207 52%,#150502)!important}
+.top{background:#250a04!important;border-bottom:3px solid var(--retro-gold)!important;box-shadow:0 4px 18px #0008!important}
+.pill{background:#351006!important;border:2px solid #c25a18!important;color:#ffe6bd!important}
+.btn{background:linear-gradient(135deg,#d64214,#f47718)!important;border:2px solid var(--retro-gold)!important;color:#fff8e8!important;box-shadow:0 5px 15px #0007!important}
+.btn.dark{background:#301006!important;border-color:#a44b14!important;color:#ffe4b8!important}
+.side{background:linear-gradient(180deg,#3a1408,#210804)!important;border-right:3px solid var(--retro-gold)!important}
+.side h3{color:#ffc85c!important}
+.nav{color:#ffe5bc!important}
+.nav:hover,.nav.active{background:linear-gradient(90deg,#a82e10,#d94a16)!important;color:#fff!important;border-left:4px solid var(--retro-gold)!important}
+.title h1,.titleRow h1,.pokeHero h1{color:#fff7e8!important;text-shadow:2px 2px #6b2108!important}
+.title p,.meta,.count,.pokeHero p,.pokeStatus{color:var(--retro-muted)!important}
+.search,.pokeTools input,.filterbox select,.field input,.field select,.field textarea,.lookupTop input{background:#210804!important;color:#fff2d6!important;border:2px solid #a34d15!important}
+.search::placeholder,.pokeTools input::placeholder,.lookupTop input::placeholder{color:#bd8b5d!important}
+.chip{background:#351006!important;border:2px solid #a34d15!important;color:#ffe0ac!important}
+.chip.active{background:#d44714!important;border-color:var(--retro-gold)!important;color:#fff!important}
+.filterbox,.lookup,.card,.pokeCard,.modal,.empty{background:linear-gradient(180deg,#43190a,#240b05)!important;border:2px solid #a34d15!important;box-shadow:0 8px 22px #0008!important}
+.filterbox h3{color:#ffd891!important}
+.card:hover,.pokeCard:hover{border-color:var(--retro-gold)!important}
+.cardImg{background:linear-gradient(135deg,#e8d5b8,#fff0d7)!important}
+.tag{background:#d44714!important;border:1px solid var(--retro-gold)!important}
+.stock{color:#91e879!important}.price{color:#fff0ce!important}
+.drawer{background:#160402e8!important}.modalHead{border-bottom:2px solid #914313!important}
+.preview,.marketBox{background:#210804!important;border-color:#914313!important}
+.pokeHero{background:linear-gradient(135deg,#571d07,#8b320e)!important;border:2px solid #b25216!important}
+.progress{background:#250904!important}.progress span{background:linear-gradient(90deg,#d44714,#ffc42a)!important}
+.pokeTools button{background:#351006!important;border:2px solid #a34d15!important;color:#ffe0ac!important}
+.pokeTools button.active{background:#d44714!important;border-color:var(--retro-gold)!important;color:#fff!important}
+.pokeImg{background:radial-gradient(circle,#7d2e0b,#210704 72%)!important}
+.pokeBody button{background:#351006!important;border-color:#a34d15!important;color:#ffe0ac!important}
+.pokeCard.owned{border-color:#e3a52b!important}
+.pokeCard.owned .pokeBody button{background:#263715!important;border-color:#6d9131!important;color:#dfffad!important}
+.pokemon-ambient img{opacity:.10!important}
+@media(max-width:1000px){.layout{display:flex!important;flex-direction:column!important}.side{order:0!important;position:relative!important;top:auto!important;width:100%!important;height:auto!important;min-height:0!important;padding:7px 8px!important;border-right:0!important;border-bottom:3px solid var(--retro-gold)!important;overflow-x:auto!important;white-space:nowrap!important}.side h3{display:none!important}.nav{display:inline-flex!important;width:auto!important;margin:0 3px!important}.main{order:1!important;width:100%!important;padding:18px 15px 32px!important}.content{grid-template-columns:1fr!important}.filterbox{position:static!important}}
+@media(max-width:650px){.top{height:58px!important;padding:0 10px!important}.main{padding:14px 10px 28px!important}.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.cardImg{height:205px!important}.pokeGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.title h1{font-size:27px!important}}
+
 </style>
 </head>
 <body>
