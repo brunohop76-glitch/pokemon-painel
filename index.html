@@ -4,7 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>O DIÁRIO TCG - Painel</title>
-<style>html,body{margin:0;background:#050914;color:#fff;font-family:Arial,sans-serif}#loading{padding:30px;text-align:center}</style>
+<style>html,body{margin:0;background:#050914;color:#fff;font-family:Arial,sans-serif}#loading{padding:30px;text-align:center}
+/* GEN1 POKEMON AMBIENT V1 */
+.pokemon-ambient{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.pokemon-ambient img{position:absolute;width:clamp(72px,8vw,150px);height:clamp(72px,8vw,150px);object-fit:contain;opacity:.13;filter:drop-shadow(0 8px 14px #0008);animation:pkFloat 7s ease-in-out infinite}
+.pokemon-ambient .pk1{left:1.5%;top:11%;animation-delay:-1s}.pokemon-ambient .pk2{right:2%;top:18%;animation-delay:-4s}.pokemon-ambient .pk3{left:24%;top:7%;width:clamp(58px,6vw,110px);animation-delay:-2s}.pokemon-ambient .pk4{right:25%;top:78%;animation-delay:-5s}.pokemon-ambient .pk5{left:5%;bottom:7%;animation-delay:-3s}.pokemon-ambient .pk6{right:6%;bottom:10%;width:clamp(62px,7vw,125px);animation-delay:-6s}.pokemon-ambient .pk7{left:39%;top:44%;width:clamp(55px,5vw,100px);opacity:.08;animation-delay:-1.5s}.pokemon-ambient .pk8{right:37%;top:17%;width:clamp(50px,5vw,95px);opacity:.08;animation-delay:-4.5s}.pokemon-ambient .pk9{left:43%;bottom:4%;width:clamp(65px,6vw,115px);opacity:.09;animation-delay:-2.5s}.pokemon-ambient .pk10{right:14%;bottom:39%;width:clamp(55px,5vw,100px);opacity:.08;animation-delay:-5.5s}
+@keyframes pkFloat{0%,100%{transform:translate3d(0,0,0) rotate(-3deg)}50%{transform:translate3d(0,-12px,0) rotate(3deg)}}
+.main,.side,.top{position:relative;z-index:3}.top{overflow:hidden}
+.top:after{content:'';position:absolute;right:220px;top:-35px;width:160px;height:160px;background-image:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png');background-size:contain;background-position:center;background-repeat:no-repeat;opacity:.06;pointer-events:none}
+.side:after{content:'';position:absolute;right:-35px;bottom:20px;width:150px;height:150px;background-image:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png');background-size:contain;background-position:center;background-repeat:no-repeat;opacity:.08;pointer-events:none}
+.pokeHero{position:relative;overflow:hidden}.pokeHero:after{content:'';position:absolute;right:12px;bottom:-30px;width:190px;height:190px;background-image:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png');background-size:contain;background-position:center;background-repeat:no-repeat;opacity:.12;pointer-events:none}
+.card,.filterbox,.lookup,.pokeCard{position:relative}.card:after,.filterbox:after,.lookup:after,.pokeCard:after{content:'';position:absolute;right:-22px;bottom:-28px;width:90px;height:90px;background-image:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png');background-size:contain;background-position:center;background-repeat:no-repeat;opacity:.045;pointer-events:none;z-index:0}.card>*,.filterbox>*,.lookup>*,.pokeCard>*{position:relative;z-index:1}
+@media(max-width:1000px){.pokemon-ambient img{opacity:.09}.pokemon-ambient .pk3,.pokemon-ambient .pk7,.pokemon-ambient .pk8,.pokemon-ambient .pk9,.pokemon-ambient .pk10{display:none}.top:after{right:100px}}
+@media(max-width:650px){.pokemon-ambient .pk1{left:-18px;top:18%}.pokemon-ambient .pk2{right:-22px;top:27%}.pokemon-ambient .pk4{right:-20px;bottom:20%}.pokemon-ambient .pk5{left:-20px;bottom:5%}.pokemon-ambient .pk6{right:-22px;bottom:4%}.top:after{display:none}.side:after{width:100px;height:100px;right:-28px;bottom:-5px}.pokeHero:after{width:120px;height:120px;right:-18px;bottom:-20px}}
+
+</style>
 </head>
 <body>
 <div id="loading">Abrindo O DIÁRIO TCG...</div>
