@@ -18,14 +18,19 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           retro = Path('retro.css').read_text(encoding='utf-8') if Path('retro.css').exists() else ''
-          if retro and 'id="odtcg-retro-theme"' not in s:
-              s = s.replace('</style>', '<style id="odtcg-retro-theme">'+retro+'</style>\n</style>', 1)
-          p.write_text(s, encoding='utf-8')
+          marker='<style id="odtcg-retro-theme">'
+          if marker in s:
+              start=s.index(marker)
+              end=s.index('</style>',start)+len('</style>')
+              s=s[:start]+s[end:]
+          if retro:
+              s=s.replace('</style>',retro+'\n</style>',1)
+          p.write_text(s,encoding='utf-8')
       - name: Publicar alteração
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Restaurar tema retro laranja no painel'
+          git commit -m 'Corrigir aplicação do tema retro no painel'
           git push
