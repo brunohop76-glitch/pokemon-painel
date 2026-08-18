@@ -34,4 +34,5 @@ async function openPokemon(id){seen.add(id);write(VIEW,seen);draw();$('modal').c
 async function loadTCG(name){try{const r=await fetch(TCG+'?q='+encodeURIComponent('name:"'+name+'"')+'&pageSize=12',{cache:'no-store'});if(!r.ok)throw Error();const a=(await r.json()).data||[];$('tcg').innerHTML=a.length?a.map(c=>`<div class="tcg-card"><img src="${esc(c.images?.small||'')}" loading="lazy" alt="${esc(c.name)}"><small>${esc(c.set?.name||'')}</small></div>`).join(''):'<div class="empty">Nenhuma carta encontrada.</div>'}catch{$('tcg').innerHTML='<div class="empty">Cartas TCG indisponíveis no momento.</div>'}}
 function close(){ $('modal').classList.remove('open') }let timer;function delayed(){clearTimeout(timer);timer=setTimeout(filter,120)}
 $('q').oninput=delayed;$('gen').onchange=filter;$('type').onchange=filter;$('refresh').onclick=()=>load(true);$('close').onclick=close;$('modal').onclick=e=>{if(e.target===$('modal'))close()};$('favFilter').onclick=()=>setMode('fav');$('viewedFilter').onclick=()=>setMode('seen');$('unviewedFilter').onclick=()=>setMode('unseen');$('clearMarks').onclick=()=>{if(confirm('Limpar favoritos e histórico de vistos?')){fav.clear();seen.clear();write(FAV,fav);write(VIEW,seen);mode='';filter()}};load();
-</script></body></html>
+</script><script src="pokedex-enhancements.js"></script>
+</body></html>
