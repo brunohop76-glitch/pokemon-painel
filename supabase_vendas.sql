@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS public.vendas (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  carta_id bigint,
+  carta_id text,
   carta_nome text NOT NULL,
   carta_set text,
   quantidade integer NOT NULL CHECK (quantidade > 0),
