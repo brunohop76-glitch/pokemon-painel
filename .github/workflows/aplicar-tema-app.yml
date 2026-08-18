@@ -1,9 +1,12 @@
-name: Aplicar tema Pokémon e layout mobile
+name: Consolidar tema retro e publicar painel
+
 on:
   push:
     branches: [main]
+
 permissions:
   contents: write
+
 jobs:
   theme:
     if: github.actor != 'github-actions[bot]'
@@ -11,26 +14,40 @@ jobs:
     steps:
       - name: Baixar código
         uses: actions/checkout@v4
-      - name: Aplicar tema retro laranja e layout mobile
+
+      - name: Consolidar CSS e remover duplicações do tema
         shell: python
         run: |
           from pathlib import Path
+          import re
+
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          retro = Path('retro.css').read_text(encoding='utf-8') if Path('retro.css').exists() else ''
-          marker='<style id="odtcg-retro-theme">'
+          css = Path('retro-final.css').read_text(encoding='utf-8')
+
+          marker = '/* O DIÁRIO TCG — TEMA RETRO LARANJA / FIRE RED */'
           if marker in s:
-              start=s.index(marker)
-              end=s.index('</style>',start)+len('</style>')
-              s=s[:start]+s[end:]
-          if retro:
-              s=s.replace('</style>',retro+'\n</style>',1)
-          p.write_text(s,encoding='utf-8')
+              start = s.index(marker)
+              style_end = s.find('</style>', start)
+              if style_end != -1:
+                  s = s[:start] + s[style_end:]
+
+          # Remove versões antigas injetadas por workflows anteriores.
+          s = re.sub(r'<style id="odtcg-retro-theme">.*?</style>', '', s, flags=re.S)
+
+          # Garante uma única versão do tema, após o CSS estrutural existente.
+          if '</style>' in s:
+              s = s.replace('</style>', css + '\n</style>', 1)
+          else:
+              s = s.replace('</head>', '<style>\n' + css + '\n</style>\n</head>', 1)
+
+          p.write_text(s, encoding='utf-8')
+
       - name: Publicar alteração
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Corrigir aplicação do tema retro no painel'
+          git commit -m 'Consolidar tema retro e remover CSS duplicado'
           git push
