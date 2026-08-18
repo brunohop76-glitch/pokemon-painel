@@ -1,4 +1,4 @@
-name: Consolidar tema retro e publicar painel
+name: Consolidar tema retro e recursos da Pokédex
 
 on:
   push:
@@ -32,22 +32,30 @@ jobs:
               if style_end != -1:
                   s = s[:start] + s[style_end:]
 
-          # Remove versões antigas injetadas por workflows anteriores.
           s = re.sub(r'<style id="odtcg-retro-theme">.*?</style>', '', s, flags=re.S)
-
-          # Garante uma única versão do tema, após o CSS estrutural existente.
           if '</style>' in s:
               s = s.replace('</style>', css + '\n</style>', 1)
           else:
               s = s.replace('</head>', '<style>\n' + css + '\n</style>\n</head>', 1)
-
           p.write_text(s, encoding='utf-8')
+
+      - name: Integrar recursos extras da Pokédex
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('pokedex-original.html')
+          if p.exists():
+              s = p.read_text(encoding='utf-8')
+              tag='<script src="pokedex-enhancements.js"></script>'
+              if tag not in s:
+                  s=s.replace('</body>',tag+'\n</body>')
+                  p.write_text(s,encoding='utf-8')
 
       - name: Publicar alteração
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
+          git add index.html pokedex-original.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Consolidar tema retro e remover CSS duplicado'
+          git commit -m 'Consolidar tema e integrar dados extras da Pokedex'
           git push
