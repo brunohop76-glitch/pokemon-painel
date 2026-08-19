@@ -1,0 +1,59 @@
+name: Renomear sistema para DMELLO TCG
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    if: github.event.head_commit.message != 'Aplicar marca DMELLO TCG'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Substituir nome do sistema
+        shell: python
+        run: |
+          from pathlib import Path
+
+          replacements = {
+              'O DIÁRIO TCG': 'DMELLO TCG',
+              'O DIÁRIO': 'DMELLO TCG',
+              'O-DIARIO-TCG': 'DMELLO-TCG',
+              'o-diario-tcg': 'dmello-tcg',
+          }
+
+          extensions = {'.html', '.css', '.js', '.json', '.md', '.svg', '.yml', '.yaml', '.txt'}
+          skip = {'.git', 'node_modules', 'dist'}
+
+          changed = []
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or path.suffix.lower() not in extensions:
+                  continue
+              if any(part in skip for part in path.parts):
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              new = text
+              for old, value in replacements.items():
+                  new = new.replace(old, value)
+              if new != text:
+                  path.write_text(new, encoding='utf-8')
+                  changed.append(str(path))
+
+          print('Arquivos alterados:', *changed, sep='\n- ')
+
+      - name: Commitar alteracoes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m 'Aplicar marca DMELLO TCG'
+          git push
