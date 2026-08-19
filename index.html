@@ -51,7 +51,8 @@ html,body{margin:0;background:#1b0804!important;color:#fff4dc!important;font-fam
     if(!response.ok) throw new Error('app.html '+response.status);
     let html=await response.text();
     html=html.replace('</head>','<link rel="stylesheet" href="retro-final.css'+v+'">\n</head>');
-    html=html.replace('</body>','<script src="enhancements.js'+v+'"><\/script>\n</body>');
+    html=html.replace('<script src="enhancements.js?v=20260819-2"></script>
+</body>','<script src="enhancements.js'+v+'"><\/script>\n</body>');
     document.open();
     document.write(html);
     document.close();
