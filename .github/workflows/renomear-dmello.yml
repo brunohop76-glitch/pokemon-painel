@@ -57,3 +57,5 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m 'Aplicar marca DMELLO TCG'
           git push
+
+# O nome comercial do aplicativo é DMELLO TCG
