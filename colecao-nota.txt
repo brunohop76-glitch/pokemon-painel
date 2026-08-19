@@ -1,1 +1,0 @@
-A coleção usa localStorage para não pesar o painel.
