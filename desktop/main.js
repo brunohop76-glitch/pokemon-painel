@@ -1,7 +1,6 @@
 const { app, BrowserWindow, shell } = require('electron');
-const path = require('path');
 
-const PANEL_URL = 'https://brunohop76-glitch.github.io/pokemon-painel/';
+const PANEL_URL = 'https://brunohop76-glitch.github.io/pokemon-painel/app.html?v=20260819-2';
 
 function createWindow() {
   const win = new BrowserWindow({
