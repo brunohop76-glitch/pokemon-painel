@@ -20,20 +20,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160704;col
 <header class="toolbar">
 <button class="back" onclick="goHome()">← Voltar ao Painel</button>
 <div class="title">O DIÁRIO <span>TCG</span> · Pokédex Completa</div>
-<div class="hint">Clique em um Pokémon para abrir a ficha completa</div>
+<div class="hint">Clique em um Pokémon para abrir a ficha completa · / buscar · Esc fechar</div>
 </header>
-<iframe id="pokedexFrame" class="frame" src="pokedex-original.html" title="Pokédex Completa"></iframe>
+<iframe id="pokedexFrame" class="frame" src="pokedex-original.html?v=20260819-1" title="Pokédex Completa"></iframe>
 <script>
-function goHome(){window.location.href='index.html?v=20260818-1'}
+function goHome(){window.location.href='index.html?v=20260819-3'}
 
 const frame=document.getElementById('pokedexFrame');
 
-/*
-  A Pokédex original possui uma janela própria de detalhes.
-  Aqui fazemos a mesma navegação da Busca Universal:
-  clicar no Pokémon abre a ficha completa pokemon.html?id=...
-  no documento principal, mantendo o botão Voltar ao Painel.
-*/
 frame.addEventListener('load',()=>{
   try{
     const doc=frame.contentDocument;
@@ -52,5 +46,6 @@ frame.addEventListener('load',()=>{
   }
 });
 </script>
+<script src="pokedex-redesign.js?v=20260819-1"></script>
 </body>
 </html>
