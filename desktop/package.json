@@ -1,0 +1,18 @@
+{
+  "name": "o-diario-tcg-desktop",
+  "version": "1.0.0",
+  "description": "Aplicativo desktop do O DIÁRIO TCG",
+  "main": "main.js",
+  "author": "O DIÁRIO TCG",
+  "license": "MIT",
+  "scripts": {"start": "electron .", "dist": "electron-builder --win"},
+  "devDependencies": {"electron": "^38.1.0", "electron-builder": "^26.0.12"},
+  "build": {
+    "appId": "com.odiariotcg.desktop",
+    "productName": "O DIÁRIO TCG",
+    "directories": {"output": "dist"},
+    "files": ["main.js", "preload.js", "package.json"],
+    "win": {"target": "nsis", "artifactName": "O-DIARIO-TCG-Setup-${version}.${ext}"},
+    "nsis": {"oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "createStartMenuShortcut": true}
+  }
+}
